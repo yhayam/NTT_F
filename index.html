@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予約画面</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f9fbff 0%, #eef4ff 100%);
+            color: #2d3748;
+            min-height: 100vh;
+        }
+
+        /* ヘッダー */
+        .header {
+            background: linear-gradient(135deg, #0B5FFF 0%, #0847b3 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(11, 95, 255, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .attendant-name {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* レイアウト */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* メインコンテンツ */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            width: 100%;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .content-subtitle {
+            font-size: 15px;
+            color: #718096;
+        }
+
+        /* ツールバー */
+        .toolbar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .search-input {
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            width: 300px;
+            font-size: 14px;
+            height: 42px;
+            margin-bottom: 0;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            height: 42px;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        /* VIPテーブル */
+        .vip-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow-y: auto; /* 縦スクロール可能にする */
+            overflow-x: auto;
+            max-height: calc(100vh - 340px); /* 画面の高さに合わせて高さ制限 */
+            padding-bottom: 40px; /* ボトムバーと重ならない余白 */
+        }
+
+        .vip-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .vip-table thead {
+            background: linear-gradient(135deg, #f7faff 0%, #eef4ff 100%);
+        }
+
+        .vip-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        .vip-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .vip-table th.sortable:hover {
+            color: #0B5FFF;
+        }
+
+        .vip-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s;
+        }
+
+        .vip-table tbody tr:hover {
+            background: #fafbff;
+        }
+
+        .vip-table tbody tr.selected {
+            background: #e6f0ff;
+        }
+
+        .vip-table td {
+            padding: 20px;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .checkbox-cell {
+            width: 50px;
+            text-align: center;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #0B5FFF;
+        }
+
+        /* 予約情報 */
+        .reservation-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .reservation-tag {
+            background: #f0f4ff;
+            color: #0B5FFF;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .reservation-tag .remove-icon {
+            cursor: pointer;
+            color: #e53e3e;
+            font-weight: 700;
+        }
+
+        .reservation-tag .remove-icon:hover {
+            color: #c53030;
+        }
+
+        /* 基本講演 */
+        .lecture-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e0;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .lecture-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .lecture-label.attending {
+            color: #4CAF50;
+        }
+
+        .lecture-label.not-attending {
+            color: #e53e3e;
+        }
+
+        /* 固定ボトムバー */
+        .bottom-bar {
+            position: fixed;
+            bottom: -100px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: bottom 0.3s ease-out;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .bottom-bar.show {
+            bottom: 0;
+        }
+
+        .selected-info {
+            font-size: 15px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .bottom-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .bottom-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-bulk-reserve {
+            background: linear-gradient(135deg, #0B5FFF 0%, #0847b3 100%);
+            color: white;
+        }
+
+        .btn-bulk-reserve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(11, 95, 255, 0.4);
+        }
+
+
+        /* モーダル */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #a0aec0;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: #f7faff;
+            color: #2d3748;
+        }
+
+        .modal-content {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #0B5FFF;
+        }
+
+        .selected-members {
+            background: #f7faff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .selected-members-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .member-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .member-chip {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #2d3748;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-box {
+            background: #fff9e6;
+            border-left: 4px solid #fbbf24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+
+        .info-box-text {
+            font-size: 13px;
+            color: #78350f;
+            line-height: 1.6;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover {
+            border-color: #0B5FFF;
+            background: #f7faff;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #0B5FFF;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .time-slot {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .time-slot:hover {
+            border-color: #0B5FFF;
+            background: #f7faff;
+        }
+
+        .time-slot.selected {
+            border-color: #0B5FFF;
+            background: #e6f0ff;
+        }
+
+        .time-slot-time {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 5px;
+        }
+
+        .time-slot-label {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-cancel:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #0B5FFF 0%, #0847b3 100%);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(11, 95, 255, 0.4);
+        }
+
+        .btn-confirm:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .person-time-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f7faff;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .person-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .person-company {
+            font-size: 13px;
+            color: #718096;
+            margin-left: 28px;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        .time-select-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .person-select-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .person-select-item:hover {
+            border-color: #0B5FFF;
+            background: #f7faff;
+        }
+
+        .person-select-item input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #0B5FFF;
+        }
+
+        .person-info {
+            flex: 1;
+        }
+
+        .person-info-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 4px;
+        }
+
+        .person-info-company {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .person-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .person-card {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .person-card:hover {
+            border-color: #0B5FFF;
+            background: #f7faff;
+            transform: translateY(-2px);
+        }
+
+        .person-card.selected {
+            border-color: #0B5FFF;
+            background: #e6f0ff;
+        }
+
+        .person-card-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 20px;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-logo {
+                font-size: 20px;
+            }
+
+            .attendant-name {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .content-title {
+                font-size: 22px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-left {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .vip-table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .bottom-bar {
+                padding: 15px 20px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .bottom-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .bottom-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+            .vip-table th,
+            .vip-table td {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+
+            .reservation-tag {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .lecture-label {
+                font-size: 12px;
+            }
+
+            .modal {
+                padding: 25px;
+            }
+
+            .modal-title {
+                font-size: 20px;
+            }
+
+            .time-slots {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 予約完了オーバーレイ -->
+    <div class="completion-overlay" id="completionOverlay">
+        <div class="completion-modal">
+            <div class="completion-message"> 予約完了しました</div>
+            <button class="completion-close-btn" onclick="closeCompletionScreen()">閉じる</button>
+        </div>
+    </div>
+    <style>
+        /* 予約完了オーバーレイ */
+        .completion-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        .completion-overlay.show {
+            display: flex;
+        }
+        .completion-modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 48px 32px 32px 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 300px;
+            max-width: 90vw;
+        }
+        .completion-message {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0B5FFF;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .completion-close-btn {
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #0B5FFF 0%, #0847b3 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .completion-close-btn:hover {
+            background: linear-gradient(135deg, #0847b3 0%, #0B5FFF 100%);
+        }
+    </style>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-logo">地域ミライ共創フォーラム 予約画面</div>
+            <div class="header-info">
+                <div class="attendant-name">
+                    <span>担当者：速水柚紀</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="header-btn" onclick="logout()">ログアウト</button>
+        </div>
+    </header>
+
+    <!-- メインレイアウト -->
+    <div class="layout">
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">担当招待者/営業担当一覧</h1>
+            </div>
+
+            <!-- ツールバー -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="氏名・企業名で検索..." id="searchInput">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterSelect" class="filter-label">予約の有無</label>
+                        <select class="filter-select" id="filterSelect">
+                            <option value="all">すべて</option>
+                            <option value="reserved">予約済のみ</option>
+                            <option value="unreserved">未予約のみ</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="typeFilter" class="filter-label">会員種別</label>
+                        <select class="filter-select" id="typeFilter">
+                            <option value="all">すべて</option>
+                            <option value="guest">招待者</option>
+                            <option value="ntt">営業担当者</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIPテーブル -->
+            <div class="vip-table-container">
+                <table class="vip-table">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-cell"></th>
+                            <th class="sortable">氏名 </th>
+                            <th class="sortable">企業名 </th>
+                            <th>メールアドレス</th>
+                            <th>予約一覧</th>
+                            <th style="text-align: center;">基調講演</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vipTableBody">
+                        <!-- データはJavaScriptで動的に生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- 固定ボトムバー -->
+    <div class="bottom-bar" id="bottomBar">
+        <div class="selected-info">
+            <span id="selectedCount">0</span>名を選択中
+        </div>
+        <div class="bottom-actions">
+            <button class="bottom-btn btn-bulk-reserve" onclick="openTicketModal('tour')">
+                展示ツアーを予約
+            </button>
+            <button class="bottom-btn btn-bulk-reserve" onclick="openTicketModal('lunch')">
+                お弁当を予約
+            </button>
+            <button class="bottom-btn btn-bulk-reserve" onclick="openTicketModal('greeting')">
+                三役挨拶を予約
+            </button>
+            <button class="bottom-btn btn-bulk-reserve" onclick="downloadAllBadges()">
+                バッジ一括ダウンロード
+            </button>
+        </div>
+    </div>
+
+
+    <!-- 展示ツアー予約モーダル -->
+    <div class="modal-overlay" id="tourModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">展示ツアー予約（抽選制）</h2>
+                <button class="modal-close" onclick="closeTourModal()">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="selected-members">
+                    <div class="selected-members-title">選択中のVIP会員</div>
+                    <div class="member-list" id="tourMemberList"></div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">ツアー情報</div>
+                    <div class="info-box-text">
+                        ・特別展示＋e-City Labo展示ツアー<br>
+                        ・1グループ約10名（複数社混成）<br>
+                        ・第一希望・第二希望で抽選を行います
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">第一希望</label>
+                    <select class="form-select" id="tourFirstChoice">
+                        <option value="">選択してください</option>
+                        <option value="morning">午前の回（11:00-12:00）</option>
+                        <option value="afternoon">午後の回（15:00-16:00）</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">第二希望</label>
+                    <select class="form-select" id="tourSecondChoice">
+                        <option value="">選択してください</option>
+                        <option value="morning">午前の回（11:00-12:00）</option>
+                        <option value="afternoon">午後の回（15:00-16:00）</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeTourModal()">キャンセル</button>
+                <button class="modal-btn btn-confirm" onclick="confirmTourReservation()">予約を確定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- お弁当予約モーダル -->
+    <div class="modal-overlay" id="lunchModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">お弁当予約</h2>
+                <button class="modal-close" onclick="closeLunchModal()">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="selected-members">
+                    <div class="selected-members-title">選択中の招待者/営業担当者</div>
+                    <div class="member-list" id="lunchMemberList"></div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeLunchModal()">キャンセル</button>
+                <button class="modal-btn btn-confirm" onclick="confirmLunchReservation()">予約を確定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 三役挨拶予約モーダル - ステップ1: 人物選択 -->
+    <div class="modal-overlay" id="greetingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">三役挨拶予約 - 三役選択</h2>
+                <button class="modal-close" onclick="closeGreetingModal()">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="info-box">
+                    <div class="info-box-title">三役選択</div>
+                    <div class="info-box-text">
+                        三役挨拶を行う人物を選択してください
+                    </div>
+                </div>
+
+                <div id="greetingPersonList" class="person-grid">
+                    <!-- JavaScriptで動的に生成 -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeGreetingModal()">キャンセル</button>
+                <button class="modal-btn btn-confirm" onclick="proceedToTimeSelection()" disabled id="greetingNextBtn">次へ（時間選択）</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 三役挨拶予約モーダル - ステップ2: 時間選択 -->
+    <div class="modal-overlay" id="greetingTimeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">三役挨拶予約 - 時間選択</h2>
+                <button class="modal-close" onclick="closeGreetingTimeModal()">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="selected-members">
+                    <div class="selected-members-title">選択中の人物</div>
+                    <div class="member-list">
+                        <div class="member-chip" id="selectedPersonName"></div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">時間選択</div>
+                    <div class="info-box-text">
+                        三役挨拶の時間を選択してください
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">時間を選択</label>
+                    <div class="time-slots">
+                        <div class="time-slot" onclick="selectGreetingTime('13:00')">
+                            <div class="time-slot-time">13:00〜</div>
+                            <div class="time-slot-label">午後枠①</div>
+                        </div>
+                        <div class="time-slot" onclick="selectGreetingTime('14:00')">
+                            <div class="time-slot-time">14:00〜</div>
+                            <div class="time-slot-label">午後枠②</div>
+                        </div>
+                        <div class="time-slot" onclick="selectGreetingTime('15:00')">
+                            <div class="time-slot-time">15:00〜</div>
+                            <div class="time-slot-label">午後枠③</div>
+                        </div>
+                        <div class="time-slot" onclick="selectGreetingTime('16:00')">
+                            <div class="time-slot-time">16:00〜</div>
+                            <div class="time-slot-label">午後枠④</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="backToPersonSelection()">← 戻る</button>
+                <button class="modal-btn btn-confirm" onclick="confirmGreetingReservation()" disabled id="greetingConfirmBtn">予約を確定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // サンプルデータ
+        const vipData = [
+            {
+                id: 1,
+                name: '金城清美',
+                company: 'bravesoft株式会社',
+                email: 'kaneshiro@bravesoft.co.jp',
+                reservations: ['展示ツアー 10:00~11:00枠', 'お弁当', '三役挨拶 13:00~'],
+                lecture: true,
+                type: 'guest'
+            },
+            {
+                id: 2,
+                name: '小出拓磨',
+                company: 'テスト株式会社',
+                email: 'koide@test.co.jp',
+                reservations: ['展示ツアー 11:00~12:00枠', '三役挨拶 13:00~'],
+                lecture: false,
+                type: 'guest'
+            },
+            {
+                id: 3,
+                name: '鈴木一郎',
+                company: '株式会社テクノロジー',
+                email: 'suzuki@technology.co.jp',
+                reservations: ['お弁当'],
+                lecture: true,
+                type: 'guest'
+            },
+            {
+                id: 4,
+                name: '田中美咲',
+                company: 'イノベーション株式会社',
+                email: 'tanaka@innovation.co.jp',
+                reservations: [],
+                lecture: false,
+                type: 'guest'
+            },
+            {
+                id: 5,
+                name: '山田太郎',
+                company: 'NTT東日本',
+                email: 'yamada@ntt-east.co.jp',
+                reservations: ['お弁当', '三役挨拶 14:00~'],
+                lecture: true,
+                type: 'ntt'
+            },
+            {
+                id: 6,
+                name: '佐藤花子',
+                company: 'NTTデータ',
+                email: 'sato@nttdata.co.jp',
+                reservations: [],
+                lecture: false,
+                type: 'ntt'
+            },
+            {
+                id: 7,
+                name: '高橋健太',
+                company: 'NTT西日本',
+                email: 'takahashi@ntt-west.co.jp',
+                reservations: ['展示ツアー 10:00~11:00枠', 'お弁当'],
+                lecture: true,
+                type: 'ntt'
+            },
+            
+        ];
+
+        // テーブルを描画
+        function renderTable() {
+            const tbody = document.getElementById('vipTableBody');
+            tbody.innerHTML = '';
+
+            vipData.forEach(vip => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = vip.id;
+                tr.dataset.type = vip.type;
+
+                tr.innerHTML = `
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="custom-checkbox vip-checkbox" data-id="${vip.id}">
+                    </td>
+                    <td>${vip.name}</td>
+                    <td>${vip.company}</td>
+                    <td>${vip.email}</td>
+                    <td>
+                        <div class="reservation-tags">
+                            ${vip.reservations.length > 0 
+                                ? vip.reservations.map(r => `
+                                    <span class="reservation-tag">
+                                        ${r}
+                                        <span class="remove-icon" onclick="removeReservation(${vip.id}, '${r}')">×</span>
+                                    </span>
+                                `).join('')
+                                : '<span style="color: #a0aec0;">予約なし</span>'
+                            }
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
+                        <div class="lecture-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" ${vip.lecture ? 'checked' : ''} onchange="toggleLecture(${vip.id})">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="lecture-label ${vip.lecture ? 'attending' : 'not-attending'}">
+                                ${vip.lecture ? '参加' : '不参加'}
+                            </span>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            // チェックボックスイベント
+            document.querySelectorAll('.vip-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateSelection);
+            });
+        }
+
+        // 選択状態を更新
+        function updateSelection() {
+    const checkboxes = document.querySelectorAll('.vip-checkbox:checked');
+    const bottomBar = document.getElementById('bottomBar');
+    const selectedCount = document.getElementById('selectedCount');
+
+    selectedCount.textContent = checkboxes.length;
+
+    if (checkboxes.length > 0) {
+        bottomBar.classList.add('show');
+
+        // 一番下の選択行を中央付近にスクロール
+        const lastChecked = checkboxes[checkboxes.length - 1];
+        const row = lastChecked.closest('tr');
+        if (row) {
+            const rowRect = row.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const bottomBarHeight = document.getElementById('bottomBar').offsetHeight;
+            
+            if (rowRect.bottom > windowHeight - bottomBarHeight) {
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    } else {
+        bottomBar.classList.remove('show');
+    }
+
+    // 行のハイライト
+    document.querySelectorAll('.vip-table tbody tr').forEach(row => {
+        const checkbox = row.querySelector('.vip-checkbox');
+        row.classList.toggle('selected', checkbox && checkbox.checked);
+    });
+}
+
+        // 予約モーダルを開く（チケット種別ごと）
+        function openTicketModal(ticketType) {
+            const selected = document.querySelectorAll('.vip-checkbox:checked');
+            if (selected.length === 0) {
+                return;
+            }
+
+            // 選択されたメンバーのリストを作成
+            const selectedMembers = [];
+            selected.forEach(cb => {
+                const id = cb.dataset.id;
+                const vip = vipData.find(v => v.id == id);
+                if (vip) selectedMembers.push(vip);
+            });
+
+            if (ticketType === 'tour') {
+                showTourModal(selectedMembers);
+            } else if (ticketType === 'lunch') {
+                showLunchModal(selectedMembers);
+            } else if (ticketType === 'greeting') {
+                showGreetingModal(selectedMembers);
+            }
+        }
+
+        // 展示ツアーモーダル
+        function showTourModal(members) {
+            const memberList = document.getElementById('tourMemberList');
+            memberList.innerHTML = members.map(m => 
+                `<div class="member-chip">${m.name}</div>`
+            ).join('');
+            
+            document.getElementById('tourModal').classList.add('show');
+        }
+
+        function closeTourModal() {
+            document.getElementById('tourModal').classList.remove('show');
+            document.getElementById('tourFirstChoice').value = '';
+            document.getElementById('tourSecondChoice').value = '';
+        }
+
+        function confirmTourReservation() {
+            const first = document.getElementById('tourFirstChoice').value;
+            const second = document.getElementById('tourSecondChoice').value;
+
+            if (!first) {
+                return;
+            }
+
+            if (!second) {
+                return;
+            }
+
+            if (first === second) {
+                return;
+            }
+
+            const firstLabel = first === 'morning' ? '午前の回（11:00-12:00）' : '午後の回（15:00-16:00）';
+            const secondLabel = second === 'morning' ? '午前の回（11:00-12:00）' : '午後の回（15:00-16:00）';
+
+            // 選択されたVIPに予約を追加
+            const selected = document.querySelectorAll('.vip-checkbox:checked');
+            selected.forEach(cb => {
+                const id = cb.dataset.id;
+                const vip = vipData.find(v => v.id == id);
+                if (vip) {
+                    // 既存の展示ツアー予約を削除
+                    vip.reservations = vip.reservations.filter(r => !r.includes('展示ツアー'));
+                    // 新しい予約を追加（抽選待ちとして）
+                    vip.reservations.push(`展示ツアー（抽選待ち：第一希望${firstLabel}）`);
+                }
+            });
+
+            renderTable();
+            closeTourModal();
+            showCompletionScreen();
+        }
+
+        // お弁当モーダル
+        function showLunchModal(members) {
+            const memberList = document.getElementById('lunchMemberList');
+            memberList.innerHTML = members.map(m => 
+                `<div class="member-chip">${m.name}</div>`
+            ).join('');
+            
+            document.getElementById('lunchModal').classList.add('show');
+        }
+
+        function closeLunchModal() {
+            document.getElementById('lunchModal').classList.remove('show');
+        }
+
+        function confirmLunchReservation() {
+            // 選択されたVIPに予約を追加
+            const selected = document.querySelectorAll('.vip-checkbox:checked');
+            let count = 0;
+            selected.forEach(cb => {
+                const id = cb.dataset.id;
+                const vip = vipData.find(v => v.id == id);
+                if (vip && !vip.reservations.includes('お弁当')) {
+                    vip.reservations.push('お弁当');
+                    count++;
+                }
+            });
+
+            renderTable();
+            closeLunchModal();
+            showCompletionScreen();
+        }
+
+        // 三役挨拶モーダル（2ステップ: 人物選択 → 時間選択）
+        let selectedGreetingPerson = null;
+        let selectedGreetingTime = null;
+        let availableMembers = [];
+
+        // 三役の人物リスト
+        const executiveList = [
+            { id: 'exec_1', name: '佐藤 健一' },
+            { id: 'exec_2', name: '鈴木 美咲' },
+            { id: 'exec_3', name: '田中 太郎' },
+            { id: 'exec_4', name: '高橋 花子' },
+            { id: 'exec_5', name: '伊藤 誠' },
+            { id: 'exec_6', name: '渡辺 由美' },
+            { id: 'exec_7', name: '山本 隆' },
+            { id: 'exec_8', name: '中村 さくら' },
+            { id: 'exec_9', name: '小林 大輔' },
+            { id: 'exec_10', name: '加藤 愛' }
+        ];
+
+        function showGreetingModal(members) {
+            availableMembers = members;
+            selectedGreetingPerson = null;
+            selectedGreetingTime = null;
+
+            // ステップ1: 人物選択リストを生成
+            const personList = document.getElementById('greetingPersonList');
+            personList.innerHTML = executiveList.map(person => `
+                <div class="person-card" onclick="selectExecutivePerson('${person.id}', '${person.name}')">
+                    <div class="person-card-name">${person.name}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('greetingModal').classList.add('show');
+            document.getElementById('greetingNextBtn').disabled = true;
+        }
+
+        function closeGreetingModal() {
+            document.getElementById('greetingModal').classList.remove('show');
+            selectedGreetingPerson = null;
+            selectedGreetingTime = null;
+            
+            // カードの選択状態をリセット
+            document.querySelectorAll('.person-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
+
+        function selectExecutivePerson(personId, personName) {
+            selectedGreetingPerson = { id: personId, name: personName };
+            
+            // すべてのカードの選択を解除
+            document.querySelectorAll('.person-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // クリックされたカードを選択状態に
+            event.target.closest('.person-card').classList.add('selected');
+            
+            // 次へボタンを有効化
+            document.getElementById('greetingNextBtn').disabled = false;
+        }
+
+        function proceedToTimeSelection() {
+            if (!selectedGreetingPerson) {
+                return;
+            }
+
+            // 選択された人物の名前を表示
+            document.getElementById('selectedPersonName').textContent = selectedGreetingPerson.name;
+
+            // ステップ1を閉じてステップ2を開く
+            document.getElementById('greetingModal').classList.remove('show');
+            document.getElementById('greetingTimeModal').classList.add('show');
+
+            // タイムスロットをリセット
+            document.querySelectorAll('#greetingTimeModal .time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            document.getElementById('greetingConfirmBtn').disabled = true;
+        }
+
+        function closeGreetingTimeModal() {
+            document.getElementById('greetingTimeModal').classList.remove('show');
+            selectedGreetingPerson = null;
+            selectedGreetingTime = null;
+        }
+
+        function backToPersonSelection() {
+            document.getElementById('greetingTimeModal').classList.remove('show');
+            document.getElementById('greetingModal').classList.add('show');
+            selectedGreetingTime = null;
+        }
+
+        function selectGreetingTime(time) {
+            selectedGreetingTime = time;
+            
+            // すべてのタイムスロットの選択を解除
+            document.querySelectorAll('#greetingTimeModal .time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // クリックされたスロットを選択状態に
+            event.target.closest('.time-slot').classList.add('selected');
+            
+            // 確定ボタンを有効化
+            document.getElementById('greetingConfirmBtn').disabled = false;
+        }
+
+        function confirmGreetingReservation() {
+            if (!selectedGreetingPerson || !selectedGreetingTime) {
+                return;
+            }
+
+            // 選択されたVIP全員に予約を追加
+            const selectedVips = document.querySelectorAll('.vip-checkbox:checked');
+            selectedVips.forEach(cb => {
+                const vipId = cb.dataset.id;
+                const vip = vipData.find(v => v.id == vipId);
+                if (vip) {
+                    // 既存の三役挨拶予約を削除
+                    vip.reservations = vip.reservations.filter(r => !r.includes('三役挨拶'));
+                    // 新しい予約を追加（人物名 + 時間）
+                    vip.reservations.push(`三役挨拶 ${selectedGreetingPerson.name} ${selectedGreetingTime}~`);
+                }
+            });
+
+            renderTable();
+            closeGreetingTimeModal();
+            showCompletionScreen();
+        }
+
+        // 予約削除
+        function removeReservation(id, reservation) {
+            if (confirm(`「${reservation}」をキャンセルしますか？`)) {
+                const vip = vipData.find(v => v.id === id);
+                if (vip) {
+                    // 文字列のトリム＆完全一致判定で削除
+                    vip.reservations = vip.reservations.filter(r => r.trim() !== reservation.trim());
+                    
+                    renderTable();
+                }
+            }
+        }
+
+        // 基本講演トグル
+        function toggleLecture(id) {
+            const vip = vipData.find(v => v.id === id);
+            vip.lecture = !vip.lecture;
+            renderTable();
+        }
+
+
+        // 検索
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.vip-table tbody tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+
+        // フィルター
+        document.getElementById('filterSelect').addEventListener('change', function(e) {
+            applyFilters();
+        });
+
+        // 招待者/NTT社員フィルター
+        document.getElementById('typeFilter').addEventListener('change', function(e) {
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('filterSelect').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            document.querySelectorAll('.vip-table tbody tr').forEach(row => {
+                const id = row.dataset.id;
+                const type = row.dataset.type;
+                const vip = vipData.find(v => v.id == id);
+                
+                let showRow = true;
+
+                // ステータスフィルター
+                if (statusFilter === 'reserved' && vip.reservations.length === 0) {
+                    showRow = false;
+                } else if (statusFilter === 'unreserved' && vip.reservations.length > 0) {
+                    showRow = false;
+                }
+
+                // タイプフィルター
+                if (typeFilter === 'guest' && type !== 'guest') {
+                    showRow = false;
+                } else if (typeFilter === 'ntt' && type !== 'ntt') {
+                    showRow = false;
+                }
+
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        // その他の機能
+        function logout() {
+            if (confirm('ログアウトしますか？')) {
+                alert('ログアウトしました');
+            }
+        }
+
+        // バッジ一括ダウンロード（PDF生成）
+        async function downloadAllBadges() {
+            const selected = document.querySelectorAll('.vip-checkbox:checked');
+            if (selected.length === 0) {
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(18);
+            doc.text('VIPバッジ一覧', 20, 20);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+
+            let y = 35;
+            Array.from(selected).forEach((cb, index) => {
+                const vip = vipData.find(v => v.id == cb.dataset.id);
+                if (vip) {
+                    doc.text(`${index + 1}. ${vip.name}（${vip.company}）`, 20, y);
+                    y += 10;
+                }
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+            });
+
+            doc.save('VIP_Badges.pdf');
+        }
+
+        // 初期化
+        renderTable();
+        // 予約完了オーバーレイの表示
+        function showCompletionScreen() {
+            var overlay = document.getElementById('completionOverlay');
+            overlay.classList.add('show');
+
+            // ✅ チェック状態リセット
+            document.querySelectorAll('.vip-checkbox').forEach(cb => cb.checked = false);
+
+            // ✅ 行ハイライト解除
+            document.querySelectorAll('.vip-table tbody tr').forEach(row => row.classList.remove('selected'));
+
+            // ✅ ボトムバー非表示＆カウントリセット
+            const bottomBar = document.getElementById('bottomBar');
+            bottomBar.classList.remove('show');
+            document.getElementById('selectedCount').textContent = '0';
+        }
+
+        // 予約完了オーバーレイの非表示
+        function closeCompletionScreen() {
+            var overlay = document.getElementById('completionOverlay');
+            overlay.classList.remove('show');
+        }
+    </script>
+</body>
+</html>
