@@ -866,6 +866,20 @@
     </style>
 </head>
 <body>
+    <!-- ログイン画面 -->
+    <div id="login-screen" class="login-container" style="display:flex;">
+      <div class="login-card">
+        <h2 class="login-title">
+          <span class="line1">地域ミライ共創フォーラム2026</span><br>
+          <span class="line2">予約ページ ログイン</span>
+        </h2>
+        <input type="email" id="login-email" placeholder="メールアドレス">
+        <input type="password" id="login-password" placeholder="パスワード">
+        <button onclick="handleLogin()">ログインする</button>
+      </div>
+    </div>
+    <!-- メイン画面 -->
+    <div id="main-screen" style="display:none;">
     <!-- 予約完了オーバーレイ -->
     <div class="completion-overlay" id="completionOverlay">
         <div class="completion-modal">
@@ -922,11 +936,66 @@
         .completion-close-btn:hover {
             background: linear-gradient(135deg, #0847b3 0%, #0B5FFF 100%);
         }
+
+        .vip-table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow-y: auto; /* 上下スクロールのみ */
+    overflow-x: hidden;
+    max-height: calc(100vh - 240px);
+    position: relative;
+}
+
+/* ヘッダー固定 */
+.vip-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ヘッダーのデザインを統一 */
+.vip-table th {
+    background: #fff;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1a202c;
+    background-color: #ffffff;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%230B5FFF" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    transition: all 0.2s ease;
+}
+
+.form-select:hover {
+    border-color: #0B5FFF;
+    box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.1);
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #0B5FFF;
+    box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.15);
+}
+
+        
     </style>
     <!-- ヘッダー -->
     <header class="header">
         <div class="header-left">
-            <div class="header-logo">地域ミライ共創フォーラム 予約画面</div>
+            <div class="header-logo">地域ミライ共創フォーラム2026 アテンド専用マイページ（各種予約画面）</div>
             <div class="header-info">
                 <div class="attendant-name">
                     <span>担当者：速水柚紀</span>
@@ -934,7 +1003,7 @@
             </div>
         </div>
         <div class="header-right">
-            <button class="header-btn" onclick="logout()">ログアウト</button>
+            <button class="logout-btn" onclick="confirmLogout()">ログアウト</button>
         </div>
     </header>
 
@@ -943,9 +1012,8 @@
         <!-- メインコンテンツ -->
         <main class="main-content">
             <div class="content-header">
-                <h1 class="content-title">担当招待者/営業担当一覧</h1>
+                <h1 class="content-title">担当招待者/アテンド担当一覧</h1>
             </div>
-
             <!-- ツールバー -->
             <div class="toolbar">
                 <div class="toolbar-left">
@@ -965,12 +1033,11 @@
                         <select class="filter-select" id="typeFilter">
                             <option value="all">すべて</option>
                             <option value="guest">招待者</option>
-                            <option value="ntt">営業担当者</option>
+                            <option value="ntt">アテンド担当</option>
                         </select>
                     </div>
                 </div>
             </div>
-
             <!-- VIPテーブル -->
             <div class="vip-table-container">
                 <table class="vip-table">
@@ -979,9 +1046,11 @@
                             <th class="checkbox-cell"></th>
                             <th class="sortable">氏名 </th>
                             <th class="sortable">企業名 </th>
+                            <th>会員属性</th>
                             <th>メールアドレス</th>
                             <th>予約一覧</th>
                             <th style="text-align: center;">基調講演</th>
+                            <th style="text-align: center;">記念品の選択</th>
                         </tr>
                     </thead>
                     <tbody id="vipTableBody">
@@ -1070,7 +1139,7 @@
             </div>
             <div class="modal-content">
                 <div class="selected-members">
-                    <div class="selected-members-title">選択中の招待者/営業担当者</div>
+                    <div class="selected-members-title">選択中の招待者/アテンド担当者</div>
                     <div class="member-list" id="lunchMemberList"></div>
                 </div>
             </div>
@@ -1158,74 +1227,98 @@
         </div>
     </div>
 
+    </div> <!-- /#main-screen -->
+    <!-- ログアウト確認モーダル -->
+    <div id="logout-modal" class="logout-overlay" style="display:none;">
+      <div class="logout-modal">
+        <p>ログアウトしますか？</p>
+        <div class="btn-row">
+          <button onclick="handleLogout()">はい</button>
+          <button onclick="closeLogoutModal()">いいえ</button>
+        </div>
+      </div>
+    </div>
     <script>
         // サンプルデータ
         const vipData = [
-            {
-                id: 1,
-                name: '金城清美',
-                company: 'bravesoft株式会社',
-                email: 'kaneshiro@bravesoft.co.jp',
-                reservations: ['展示ツアー 10:00~11:00枠', 'お弁当', '三役挨拶 13:00~'],
-                lecture: true,
-                type: 'guest'
-            },
-            {
-                id: 2,
-                name: '小出拓磨',
-                company: 'テスト株式会社',
-                email: 'koide@test.co.jp',
-                reservations: ['展示ツアー 11:00~12:00枠', '三役挨拶 13:00~'],
-                lecture: false,
-                type: 'guest'
-            },
-            {
-                id: 3,
-                name: '鈴木一郎',
-                company: '株式会社テクノロジー',
-                email: 'suzuki@technology.co.jp',
-                reservations: ['お弁当'],
-                lecture: true,
-                type: 'guest'
-            },
-            {
-                id: 4,
-                name: '田中美咲',
-                company: 'イノベーション株式会社',
-                email: 'tanaka@innovation.co.jp',
-                reservations: [],
-                lecture: false,
-                type: 'guest'
-            },
-            {
-                id: 5,
-                name: '山田太郎',
-                company: 'NTT東日本',
-                email: 'yamada@ntt-east.co.jp',
-                reservations: ['お弁当', '三役挨拶 14:00~'],
-                lecture: true,
-                type: 'ntt'
-            },
-            {
-                id: 6,
-                name: '佐藤花子',
-                company: 'NTTデータ',
-                email: 'sato@nttdata.co.jp',
-                reservations: [],
-                lecture: false,
-                type: 'ntt'
-            },
-            {
-                id: 7,
-                name: '高橋健太',
-                company: 'NTT西日本',
-                email: 'takahashi@ntt-west.co.jp',
-                reservations: ['展示ツアー 10:00~11:00枠', 'お弁当'],
-                lecture: true,
-                type: 'ntt'
-            },
-            
-        ];
+    {
+        id: 1,
+        name: '金城清美',
+        company: 'bravesoft株式会社',
+        email: 'kaneshiro@bravesoft.co.jp',
+        reservations: ['展示ツアー 10:00~11:00枠', 'お弁当', '三役挨拶 13:00~'],
+        lecture: true,
+        gift: '',
+        type: 'guest',
+        hasInvitationTicket: true
+    },
+    {
+        id: 2,
+        name: '小出拓磨',
+        company: 'テスト株式会社',
+        email: 'koide@test.co.jp',
+        reservations: ['展示ツアー 11:00~12:00枠', '三役挨拶 13:00~'],
+        lecture: false,
+        gift: '',
+        type: 'guest',
+        hasInvitationTicket: true
+    },
+    {
+        id: 3,
+        name: '鈴木一郎',
+        company: '株式会社テクノロジー',
+        email: 'suzuki@technology.co.jp',
+        reservations: ['お弁当'],
+        lecture: true,
+        gift: '',
+        type: 'guest',
+        hasInvitationTicket: true
+    },
+    {
+        id: 4,
+        name: '田中美咲',
+        company: 'イノベーション株式会社',
+        email: 'tanaka@innovation.co.jp',
+        reservations: [],
+        lecture: false,
+        gift: '',
+        type: 'guest',
+        hasInvitationTicket: true
+    },
+    {
+        id: 5,
+        name: '山田太郎',
+        company: 'NTT東日本',
+        email: 'yamada@ntt-east.co.jp',
+        reservations: ['お弁当', '三役挨拶 14:00~'],
+        lecture: true,
+        gift: '',
+        type: 'ntt',
+        hasInvitationTicket: false
+    },
+    {
+        id: 6,
+        name: '佐藤花子',
+        company: 'NTT東日本',
+        email: 'sato@nttdata.co.jp',
+        reservations: [],
+        lecture: false,
+        gift: '',
+        type: 'ntt',
+        hasInvitationTicket: false
+    },
+    {
+        id: 7,
+        name: '高橋健太',
+        company: 'NTT東日本',
+        email: 'takahashi@ntt-west.co.jp',
+        reservations: ['展示ツアー 10:00~11:00枠', 'お弁当'],
+        lecture: true,
+        gift: '',
+        type: 'ntt',
+        hasInvitationTicket: false
+    },
+];
 
         // テーブルを描画
         function renderTable() {
@@ -1243,6 +1336,7 @@
                     </td>
                     <td>${vip.name}</td>
                     <td>${vip.company}</td>
+                    <td>${vip.type === 'ntt' ? 'アテンド' : '招待者'}</td>
                     <td>${vip.email}</td>
                     <td>
                         <div class="reservation-tags">
@@ -1268,6 +1362,16 @@
                             </span>
                         </div>
                     </td>
+
+                    <td style="text-align: center;">
+    <select class="gift-select" onchange="updateGiftSelection(${vip.id}, this.value)">
+        <option value="">選択してください</option>
+        <option value="お菓子＋グッズ" ${vip.gift === 'お菓子＋グッズ' ? 'selected' : ''}>お菓子＋グッズ</option>
+        <option value="グッズのみ" ${vip.gift === 'グッズのみ' ? 'selected' : ''}>グッズのみ</option>
+        <option value="どちらも渡さない" ${vip.gift === 'どちらも渡さない' ? 'selected' : ''}>どちらも渡さない</option>
+        <option value="不要（アテンド用）" ${vip.gift === '不要（アテンド用）' ? 'selected' : ''}>不要（アテンド用）</option>
+    </select>
+</td>
                 `;
 
                 tbody.appendChild(tr);
@@ -1320,14 +1424,28 @@
                 return;
             }
 
-            // 選択されたメンバーのリストを作成
             const selectedMembers = [];
+            let hasInvalidMember = false;
+
             selected.forEach(cb => {
                 const id = cb.dataset.id;
                 const vip = vipData.find(v => v.id == id);
-                if (vip) selectedMembers.push(vip);
+                if (vip) {
+                    // ✅ 展示ツアー・三役挨拶は招待者のみ予約可能
+                    if (['tour', 'greeting'].includes(ticketType) && !vip.hasInvitationTicket) {
+                        hasInvalidMember = true;
+                    }
+                    selectedMembers.push(vip);
+                }
             });
 
+            // ❌ アテンド（招待チケットなし）が含まれていたら警告
+            if (hasInvalidMember) {
+                alert('アテンド担当はこの予約を行うことはできません。');
+                return;
+            }
+
+            // ✅ 通常動線
             if (ticketType === 'tour') {
                 showTourModal(selectedMembers);
             } else if (ticketType === 'lunch') {
@@ -1573,6 +1691,14 @@
             renderTable();
         }
 
+        // 記念品選択を更新
+function updateGiftSelection(id, value) {
+    const vip = vipData.find(v => v.id === id);
+    if (vip) {
+        vip.gift = value;
+    }
+}
+
 
         // 検索
         document.getElementById('searchInput').addEventListener('input', function(e) {
@@ -1588,7 +1714,7 @@
             applyFilters();
         });
 
-        // 招待者/NTT社員フィルター
+        // 招待者/アテンド担当フィルター
         document.getElementById('typeFilter').addEventListener('change', function(e) {
             applyFilters();
         });
@@ -1622,11 +1748,34 @@
             });
         }
 
-        // その他の機能
-        function logout() {
-            if (confirm('ログアウトしますか？')) {
-                alert('ログアウトしました');
+        // ログイン・ログアウト機能
+        let isLoggedIn = false;
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            if (email === 'admin@bravesoft.co.jp' && password === 'test1234') {
+                isLoggedIn = true;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-screen').style.display = 'block';
+            } else {
+                alert('メールアドレスまたはパスワードが違います。');
             }
+        }
+
+        function confirmLogout() {
+            document.getElementById('logout-modal').style.display = 'flex';
+        }
+
+        function handleLogout() {
+            isLoggedIn = false;
+            document.getElementById('logout-modal').style.display = 'none';
+            document.getElementById('main-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').style.display = 'none';
         }
 
         // バッジ一括ダウンロード（PDF生成）
@@ -1664,6 +1813,12 @@
 
         // 初期化
         renderTable();
+        // 会員種別フィルターのラベルを「アテンド担当」に統一（念のためJSでoption修正）
+        document.querySelectorAll('#typeFilter option').forEach(opt => {
+            if (opt.value === 'ntt') {
+                opt.textContent = 'アテンド担当';
+            }
+        });
         // 予約完了オーバーレイの表示
         function showCompletionScreen() {
             var overlay = document.getElementById('completionOverlay');
@@ -1687,5 +1842,156 @@
             overlay.classList.remove('show');
         }
     </script>
+    <style>
+    .login-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #0B5FFF 0%, #60A5FA 100%);
+        font-family: 'Noto Sans JP', sans-serif;
+    }
+
+    /* 新ログインタイトルデザイン */
+    .login-title {
+        display: inline-block;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 64px; /* ログイン文字とメールアドレス入力欄の間に余白を追加 */
+    }
+    .login-title .line1 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0B5FFF;
+        letter-spacing: 0.5px;
+        white-space: nowrap; /* 改行を防止 */
+    }
+    .login-title .line2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a202c;
+        letter-spacing: 0.3px;
+    }
+
+    .login-card h2,
+    .login-card h2 span {
+        all: unset;
+    }
+
+    .login-card input {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .login-card input:focus {
+        outline: none;
+        border-color: #0B5FFF;
+        box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.15);
+    }
+
+    .login-card button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #0B5FFF 0%, #0847b3 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .login-card button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(11, 95, 255, 0.4);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logout-btn {
+        background: #0B5FFF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-left: auto;
+    }
+    /* ログアウト確認モーダル用オーバーレイ */
+    .logout-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .logout-modal {
+        background: #fff;
+        padding: 24px 32px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        z-index: 1001;
+    }
+    .logout-modal p {
+        font-size: 18px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 20px;
+    }
+    .btn-row {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+    .btn-row button {
+        padding: 10px 24px;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    .btn-row button:first-child {
+        background: #0B5FFF;
+        color: white;
+    }
+    .btn-row button:first-child:hover {
+        background: #0847b3;
+    }
+    .btn-row button:last-child {
+        background: #e5e7eb;
+    }
+    .btn-row button:last-child:hover {
+        background: #d1d5db;
+    }
+    /* .login-cardの定義は下部で統一 */
+    </style>
+    <style>
+    .login-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        padding: 60px 50px;
+        text-align: center;
+        width: 360px;
+        animation: fadeIn 0.6s ease;
+    }
+    </style>
 </body>
 </html>
