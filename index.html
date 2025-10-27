@@ -325,6 +325,93 @@
             transform: rotate(90deg);
         }
 
+        /* 編集・保存ボタン */
+        .edit-save-btn {
+            background: white;
+            color: #0B5FFF;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-save-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .edit-save-btn.save-mode {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .edit-save-btn.save-mode:hover {
+            background: #059669;
+        }
+
+        .edit-icon {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 編集可能な入力フィールド */
+        .info-input {
+            font-size: 15px;
+            color: #2d3748;
+            font-weight: 500;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            width: 100%;
+        }
+
+        .info-input:focus {
+            outline: none;
+            border-color: #0B5FFF;
+            box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.1);
+        }
+
+        /* 保存成功メッセージ */
+        .save-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+            font-weight: 600;
+        }
+
+        .save-message.show {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         .member-info-body {
             padding: 32px;
             overflow-y: auto;
@@ -349,6 +436,37 @@
             margin-bottom: 20px;
             padding-left: 12px;
             border-left: 4px solid #0B5FFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 編集マークボタン */
+        .edit-mark-btn {
+            background: #0B5FFF;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .edit-mark-btn:hover {
+            background: #0847b3;
+        }
+
+        .edit-mark-btn.save-mode {
+            background: #10b981;
+        }
+
+        .edit-mark-btn.save-mode:hover {
+            background: #059669;
         }
 
         .info-grid {
@@ -1063,6 +1181,12 @@
         </div>
     </div>
 
+    <!-- 保存成功メッセージ -->
+    <div class="save-message" id="saveMessage">
+        <span style="font-size: 20px; font-weight: bold;">✓</span>
+        <span>保存しました</span>
+    </div>
+
     <!-- 予約完了オーバーレイ -->
     <div class="completion-overlay" id="completionOverlay">
         <div class="completion-modal">
@@ -1510,7 +1634,7 @@
             organization: '営業本部',
             position: '課長',
             category1: 'VIP',
-            category2: 'エンドユーザー',
+            category2: '共創パートナー',
             category3: '民間企業',
             keynote: '不参加',
             focusExhibit: 'B展示',
@@ -2084,8 +2208,18 @@ function updateGiftSelection(id, value) {
         }
 
         // 会員情報モーダル
+        let isEditMode = false;
+        let currentMemberId = null;
+
         function showMemberInfo(id) {
-            const vip = vipData.find(v => v.id === id);
+            currentMemberId = id;
+            isEditMode = false;
+            renderMemberInfo();
+            document.getElementById('memberInfoModal').classList.add('show');
+        }
+
+        function renderMemberInfo() {
+            const vip = vipData.find(v => v.id === currentMemberId);
             if (!vip || !vip.details) return;
 
             const d = vip.details;
@@ -2145,19 +2279,46 @@ function updateGiftSelection(id, value) {
                 </div>
 
                 <div class="info-section">
-                    <div class="info-section-title">イベント情報</div>
+                    <div class="info-section-title">
+                        <span>参加情報</span>
+                        <button class="edit-mark-btn ${isEditMode ? 'save-mode' : ''}" onclick="toggleEditMode()">
+                            <span>${isEditMode ? '保存' : '編集'}</span>
+                        </button>
+                    </div>
                     <div class="info-grid">
                         <div class="info-row">
                             <div class="info-label">基調講演</div>
-                            <div class="info-value">${keynoteBadge}</div>
+                            ${isEditMode ? 
+                                `<select class="info-input" id="edit_keynote">
+                                    <option value="参加する" ${d.keynote === '参加する' ? 'selected' : ''}>参加する</option>
+                                    <option value="不参加" ${d.keynote === '不参加' ? 'selected' : ''}>不参加</option>
+                                </select>` :
+                                `<div class="info-value">${keynoteBadge}</div>`
+                            }
                         </div>
                         <div class="info-row">
                             <div class="info-label">重点説明項目</div>
-                            <div class="info-value">${d.focusExhibit || '<span class="empty">未設定</span>'}</div>
+                            ${isEditMode ? 
+                                `<select class="info-input" id="edit_focusExhibit">
+                                    <option value="">未選択</option>
+                                    <option value="A展示" ${d.focusExhibit === 'A展示' ? 'selected' : ''}>A展示</option>
+                                    <option value="B展示" ${d.focusExhibit === 'B展示' ? 'selected' : ''}>B展示</option>
+                                </select>` :
+                                `<div class="info-value">${d.focusExhibit || '<span class="empty">未設定</span>'}</div>`
+                            }
                         </div>
                         <div class="info-row">
-                            <div class="info-label">記念品</div>
-                            <div class="info-value">${vip.gift || '<span class="empty">未選択</span>'}</div>
+                            <div class="info-label">記念品の有無</div>
+                            ${isEditMode ? 
+                                `<select class="info-input" id="edit_gift">
+                                    <option value="">未選択</option>
+                                    <option value="お菓子＋グッズ" ${vip.gift === 'お菓子＋グッズ' ? 'selected' : ''}>お菓子＋グッズ</option>
+                                    <option value="グッズのみ" ${vip.gift === 'グッズのみ' ? 'selected' : ''}>グッズのみ</option>
+                                    <option value="どちらも渡さない" ${vip.gift === 'どちらも渡さない' ? 'selected' : ''}>どちらも渡さない</option>
+                                    <option value="不要（アテンド用）" ${vip.gift === '不要（アテンド用）' ? 'selected' : ''}>不要（アテンド用）</option>
+                                </select>` :
+                                `<div class="info-value">${vip.gift || '<span class="empty">未選択</span>'}</div>`
+                            }
                         </div>
                     </div>
                 </div>
@@ -2223,37 +2384,79 @@ function updateGiftSelection(id, value) {
                             </div>
                         </div>
 
-                        ${d.additionalAttendants && d.additionalAttendants.length > 0 ? `
-                            ${d.additionalAttendants.map((att, idx) => `
+                        ${Array.from({length: 5}, (_, idx) => {
+                            const att = d.additionalAttendants && d.additionalAttendants[idx] ? d.additionalAttendants[idx] : null;
+                            return `
                                 <div class="attendant-item">
                                     <div class="attendant-item-title">追加アテンド ${idx + 1}</div>
                                     <div class="info-grid">
                                         <div class="info-row">
                                             <div class="info-label">役職</div>
-                                            <div class="info-value">${att.position || '<span class="empty">未設定</span>'}</div>
+                                            <div class="info-value">${att && att.position ? att.position : '<span class="empty">未設定</span>'}</div>
                                         </div>
                                         <div class="info-row">
                                             <div class="info-label">氏名</div>
-                                            <div class="info-value">${att.name || '<span class="empty">未設定</span>'}</div>
+                                            <div class="info-value">${att && att.name ? att.name : '<span class="empty">未設定</span>'}</div>
                                         </div>
                                         <div class="info-row" style="grid-column: 1 / -1;">
                                             <div class="info-label">メールアドレス</div>
-                                            <div class="info-value">${att.email || '<span class="empty">未設定</span>'}</div>
+                                            <div class="info-value">${att && att.email ? att.email : '<span class="empty">未設定</span>'}</div>
                                         </div>
                                     </div>
                                 </div>
-                            `).join('')}
-                        ` : ''}
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
+        }
 
-            modal.classList.add('show');
+        function toggleEditMode() {
+            if (isEditMode) {
+                // 保存処理
+                saveMemberInfo();
+            } else {
+                // 編集モードに切り替え
+                isEditMode = true;
+                renderMemberInfo();
+            }
+        }
+
+        function saveMemberInfo() {
+            const vip = vipData.find(v => v.id === currentMemberId);
+            if (!vip || !vip.details) return;
+
+            const d = vip.details;
+
+            // イベント情報のみ編集可能
+            d.keynote = document.getElementById('edit_keynote')?.value || d.keynote;
+            d.focusExhibit = document.getElementById('edit_focusExhibit')?.value || d.focusExhibit;
+            vip.gift = document.getElementById('edit_gift')?.value || vip.gift;
+
+            // 編集モード解除
+            isEditMode = false;
+            renderMemberInfo();
+
+            // テーブルを再描画（変更を反映）
+            renderTable();
+
+            // 保存成功メッセージを表示
+            showSaveMessage();
+        }
+
+        function showSaveMessage() {
+            const message = document.getElementById('saveMessage');
+            message.classList.add('show');
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 3000);
         }
 
         function closeMemberInfo() {
             const modal = document.getElementById('memberInfoModal');
             modal.classList.remove('show');
+            isEditMode = false;
+            currentMemberId = null;
         }
 
         // モーダル外クリックで閉じる
