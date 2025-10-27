@@ -244,6 +244,238 @@
             accent-color: #0B5FFF;
         }
 
+        /* 名前をクリック可能に */
+        .member-name-link {
+            color: #0B5FFF;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .member-name-link:hover {
+            color: #0847b3;
+            text-decoration: underline;
+        }
+
+        /* 会員情報モーダル */
+        .member-info-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2500;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .member-info-modal-overlay.show {
+            display: flex;
+        }
+
+        .member-info-modal {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .member-info-header {
+            background: linear-gradient(135deg, #0B5FFF 0%, #0847b3 100%);
+            color: white;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .member-info-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .member-info-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .member-info-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .member-info-body {
+            padding: 32px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .info-section {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 20px;
+            padding-left: 12px;
+            border-left: 4px solid #0B5FFF;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px 32px;
+        }
+
+        .info-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: #1e293b;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .info-value.empty {
+            color: #94a3b8;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .info-value-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .badge-vip {
+            color: #0B5FFF;
+            border: 2px solid #0B5FFF;
+        }
+
+        .badge-staff {
+            color: #64748b;
+            border: 2px solid #cbd5e1;
+        }
+
+        .badge-yes {
+            color: #059669;
+            border: 2px solid #059669;
+        }
+
+        .badge-no {
+            color: #dc2626;
+            border: 2px solid #dc2626;
+        }
+
+        .attendant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .attendant-item {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .attendant-item-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0B5FFF;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .attendant-item .info-grid {
+            gap: 16px 32px;
+        }
+
+        @media (max-width: 768px) {
+            .member-info-modal {
+                width: 100%;
+                max-height: 95vh;
+            }
+
+            .member-info-header {
+                padding: 20px 24px;
+            }
+
+            .member-info-title {
+                font-size: 18px;
+            }
+
+            .member-info-body {
+                padding: 24px 20px;
+            }
+
+            .info-section {
+                margin-bottom: 24px;
+                padding-bottom: 20px;
+            }
+
+            .info-section-title {
+                font-size: 16px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .attendant-item {
+                padding: 16px;
+            }
+
+            .attendant-item .info-grid {
+                gap: 12px;
+            }
+        }
+
         /* 予約情報 */
         .reservation-tags {
             display: flex;
@@ -271,72 +503,6 @@
 
         .reservation-tag .remove-icon:hover {
             color: #c53030;
-        }
-
-        /* 基本講演 */
-        .lecture-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 48px;
-            height: 24px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e0;
-            transition: 0.3s;
-            border-radius: 24px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: 0.3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: #4CAF50;
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(24px);
-        }
-
-        .lecture-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #2d3748;
-        }
-
-        .lecture-label.attending {
-            color: #4CAF50;
-        }
-
-        .lecture-label.not-attending {
-            color: #e53e3e;
         }
 
         /* 固定ボトムバー */
@@ -847,10 +1013,6 @@
                 padding: 4px 8px;
             }
 
-            .lecture-label {
-                font-size: 12px;
-            }
-
             .modal {
                 padding: 25px;
             }
@@ -862,6 +1024,11 @@
             .time-slots {
                 grid-template-columns: 1fr;
             }
+            .reservation-note {
+                 font-size: 13px;
+                    color: #4a5568;
+                    margin-top: 4px;
+}
         }
     </style>
 </head>
@@ -873,6 +1040,9 @@
           <span class="line1">地域ミライ共創フォーラム2026</span><br>
           <span class="line2">予約ページ ログイン</span>
         </h2>
+        <p class="login-note">
+          ※事前(12月中旬目途）に事務局より各アテンド（正・副）へ URLとID/PWのご案内メールが送られます
+        </p>
         <input type="email" id="login-email" placeholder="メールアドレス">
         <input type="password" id="login-password" placeholder="パスワード">
         <button onclick="handleLogin()">ログインする</button>
@@ -880,10 +1050,24 @@
     </div>
     <!-- メイン画面 -->
     <div id="main-screen" style="display:none;">
+    <!-- 会員情報モーダル -->
+    <div class="member-info-modal-overlay" id="memberInfoModal">
+        <div class="member-info-modal">
+            <div class="member-info-header">
+                <div class="member-info-title">会員情報</div>
+                <button class="member-info-close" onclick="closeMemberInfo()">×</button>
+            </div>
+            <div class="member-info-body" id="memberInfoBody">
+                <!-- JavaScriptで動的に生成 -->
+            </div>
+        </div>
+    </div>
+
     <!-- 予約完了オーバーレイ -->
     <div class="completion-overlay" id="completionOverlay">
         <div class="completion-modal">
-            <div class="completion-message"> 予約完了しました</div>
+            <div class="completion-message">申込完了しました</div>
+            <p class="reservation-note">※確定時、メールにてお知らせします</p>
             <button class="completion-close-btn" onclick="closeCompletionScreen()">閉じる</button>
         </div>
     </div>
@@ -916,13 +1100,20 @@
             max-width: 90vw;
         }
         .completion-message {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #0B5FFF;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .reservation-note {
+            font-size: 0.9rem;
+            color: #4a5568;
             margin-bottom: 32px;
             text-align: center;
         }
         .completion-close-btn {
+            margin-top: 16px;
             padding: 12px 32px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -990,6 +1181,13 @@
     box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.15);
 }
 
+/* ボタンの並びと余白を調整 */
+.header-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
         
     </style>
     <!-- ヘッダー -->
@@ -1011,6 +1209,26 @@
     <div class="layout">
         <!-- メインコンテンツ -->
         <main class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">【アテンドの皆様へのご案内】</h1>
+            </div>
+            <div class="attend-guide">
+            <p><strong>◆各種予約に関して</strong><br>
+            ・各種予約は●月●日までに完了をお願いします<br>
+            ・三役挨拶は承認制、ツアーは抽選となります。それぞれ確定時に結果をメールにてお知らせします。<br>
+            ・招待者の変更については事務局までお知らせください<br>
+            ・招待者の変更については事務局までお知らせください<br>
+            ・お土産については、お菓子およびグッズのお渡しを想定しておりますが、「社外との接遇等に関するガイドライン」に基づき配布有無のご判断をお願いいたします。
+            </p>
+            <p><strong>◆イベント当日について</strong><br>
+            ・
+            </p>
+            <p><strong>◆お問い合わせ先</strong><br>
+            地域ミライ共創フォーラム2026事務局<br>
+            担当：有澤（ありさわ）　<br>
+            <a href="mailto:miraiforum2026@almellows.com">miraiforum2026@almellows.com</a><br><br>
+            </p>
+            </div>
             <div class="content-header">
                 <h1 class="content-title">担当招待者/アテンド担当一覧</h1>
             </div>
@@ -1047,9 +1265,7 @@
                             <th class="sortable">氏名 </th>
                             <th class="sortable">企業名 </th>
                             <th>会員属性</th>
-                            <th>メールアドレス</th>
                             <th>予約一覧</th>
-                            <th style="text-align: center;">基調講演</th>
                             <th style="text-align: center;">記念品の選択</th>
                         </tr>
                     </thead>
@@ -1125,7 +1341,7 @@
             </div>
             <div class="modal-actions">
                 <button class="modal-btn btn-cancel" onclick="closeTourModal()">キャンセル</button>
-                <button class="modal-btn btn-confirm" onclick="confirmTourReservation()">予約を確定</button>
+                <button class="modal-btn btn-confirm" onclick="confirmTourReservation()">申込する</button>
             </div>
         </div>
     </div>
@@ -1145,7 +1361,7 @@
             </div>
             <div class="modal-actions">
                 <button class="modal-btn btn-cancel" onclick="closeLunchModal()">キャンセル</button>
-                <button class="modal-btn btn-confirm" onclick="confirmLunchReservation()">予約を確定</button>
+                <button class="modal-btn btn-confirm" onclick="confirmLunchReservation()">申込する</button>
             </div>
         </div>
     </div>
@@ -1222,7 +1438,7 @@
             </div>
             <div class="modal-actions">
                 <button class="modal-btn btn-cancel" onclick="backToPersonSelection()">← 戻る</button>
-                <button class="modal-btn btn-confirm" onclick="confirmGreetingReservation()" disabled id="greetingConfirmBtn">予約を確定</button>
+                <button class="modal-btn btn-confirm" onclick="confirmGreetingReservation()" disabled id="greetingConfirmBtn">申込する</button>
             </div>
         </div>
     </div>
@@ -1247,10 +1463,39 @@
         company: 'bravesoft株式会社',
         email: 'kaneshiro@bravesoft.co.jp',
         reservations: ['展示ツアー 10:00~11:00枠', 'お弁当', '三役挨拶 13:00~'],
-        lecture: true,
-        gift: '',
+        gift: 'お菓子＋グッズ',
         type: 'guest',
-        hasInvitationTicket: true
+        hasInvitationTicket: true,
+        // 詳細情報
+        details: {
+            organization: '開発部',
+            position: '部長',
+            category1: 'VIP',
+            category2: '共創パートナー',
+            category3: '民間企業',
+            keynote: '参加する',
+            focusExhibit: 'A展示',
+            inviteOrg: {
+                orgName: 'NTT東日本 神奈川事業部',
+                department: '法人営業部',
+                contact: '山田太郎',
+                phone: '045-123-4567'
+            },
+            mainAttendant: {
+                position: '課長',
+                name: '佐藤一郎',
+                email: 'sato@ntt-east.co.jp'
+            },
+            subAttendant: {
+                position: '主任',
+                name: '鈴木花子',
+                email: 'suzuki@ntt-east.co.jp'
+            },
+            additionalAttendants: [
+                { position: '担当', name: '田中太郎', email: 'tanaka@ntt-east.co.jp' },
+                { position: '担当', name: '高橋美咲', email: 'takahashi@ntt-east.co.jp' }
+            ]
+        }
     },
     {
         id: 2,
@@ -1258,10 +1503,35 @@
         company: 'テスト株式会社',
         email: 'koide@test.co.jp',
         reservations: ['展示ツアー 11:00~12:00枠', '三役挨拶 13:00~'],
-        lecture: false,
-        gift: '',
+        gift: 'グッズのみ',
         type: 'guest',
-        hasInvitationTicket: true
+        hasInvitationTicket: true,
+        details: {
+            organization: '営業本部',
+            position: '課長',
+            category1: 'VIP',
+            category2: 'エンドユーザー',
+            category3: '民間企業',
+            keynote: '不参加',
+            focusExhibit: 'B展示',
+            inviteOrg: {
+                orgName: 'NTT東日本 東京事業部',
+                department: '営業部',
+                contact: '伊藤次郎',
+                phone: '03-1234-5678'
+            },
+            mainAttendant: {
+                position: '係長',
+                name: '中村三郎',
+                email: 'nakamura@ntt-east.co.jp'
+            },
+            subAttendant: {
+                position: '担当',
+                name: '小林美咲',
+                email: 'kobayashi@ntt-east.co.jp'
+            },
+            additionalAttendants: []
+        }
     },
     {
         id: 3,
@@ -1269,10 +1539,22 @@
         company: '株式会社テクノロジー',
         email: 'suzuki@technology.co.jp',
         reservations: ['お弁当'],
-        lecture: true,
         gift: '',
         type: 'guest',
-        hasInvitationTicket: true
+        hasInvitationTicket: true,
+        details: {
+            organization: '技術部',
+            position: '部長',
+            category1: 'VIP',
+            category2: '共創パートナー（候補）',
+            category3: '民間企業',
+            keynote: '参加する',
+            focusExhibit: 'A展示',
+            inviteOrg: { orgName: 'NTT東日本', department: '営業部', contact: '担当者名', phone: '00-0000-0000' },
+            mainAttendant: { position: '課長', name: 'メイン担当', email: 'main@ntt.co.jp' },
+            subAttendant: { position: '担当', name: 'サブ担当', email: 'sub@ntt.co.jp' },
+            additionalAttendants: []
+        }
     },
     {
         id: 4,
@@ -1280,10 +1562,22 @@
         company: 'イノベーション株式会社',
         email: 'tanaka@innovation.co.jp',
         reservations: [],
-        lecture: false,
         gift: '',
         type: 'guest',
-        hasInvitationTicket: true
+        hasInvitationTicket: true,
+        details: {
+            organization: 'マーケティング部',
+            position: '課長',
+            category1: 'VIP',
+            category2: 'メディア',
+            category3: '民間企業',
+            keynote: '不参加',
+            focusExhibit: 'B展示',
+            inviteOrg: { orgName: 'NTT東日本', department: '営業部', contact: '担当者名', phone: '00-0000-0000' },
+            mainAttendant: { position: '課長', name: 'メイン担当', email: 'main@ntt.co.jp' },
+            subAttendant: { position: '担当', name: 'サブ担当', email: 'sub@ntt.co.jp' },
+            additionalAttendants: []
+        }
     },
     {
         id: 5,
@@ -1291,10 +1585,22 @@
         company: 'NTT東日本',
         email: 'yamada@ntt-east.co.jp',
         reservations: ['お弁当', '三役挨拶 14:00~'],
-        lecture: true,
         gift: '',
         type: 'ntt',
-        hasInvitationTicket: false
+        hasInvitationTicket: false,
+        details: {
+            organization: '法人営業部',
+            position: '担当',
+            category1: '担当者',
+            category2: '-',
+            category3: '-',
+            keynote: '-',
+            focusExhibit: '-',
+            inviteOrg: { orgName: '-', department: '-', contact: '-', phone: '-' },
+            mainAttendant: { position: '-', name: '-', email: '-' },
+            subAttendant: { position: '-', name: '-', email: '-' },
+            additionalAttendants: []
+        }
     },
     {
         id: 6,
@@ -1302,10 +1608,22 @@
         company: 'NTT東日本',
         email: 'sato@nttdata.co.jp',
         reservations: [],
-        lecture: false,
         gift: '',
         type: 'ntt',
-        hasInvitationTicket: false
+        hasInvitationTicket: false,
+        details: {
+            organization: '営業部',
+            position: '担当',
+            category1: '担当者',
+            category2: '-',
+            category3: '-',
+            keynote: '-',
+            focusExhibit: '-',
+            inviteOrg: { orgName: '-', department: '-', contact: '-', phone: '-' },
+            mainAttendant: { position: '-', name: '-', email: '-' },
+            subAttendant: { position: '-', name: '-', email: '-' },
+            additionalAttendants: []
+        }
     },
     {
         id: 7,
@@ -1313,10 +1631,22 @@
         company: 'NTT東日本',
         email: 'takahashi@ntt-west.co.jp',
         reservations: ['展示ツアー 10:00~11:00枠', 'お弁当'],
-        lecture: true,
         gift: '',
         type: 'ntt',
-        hasInvitationTicket: false
+        hasInvitationTicket: false,
+        details: {
+            organization: '営業部',
+            position: '係長',
+            category1: '担当者',
+            category2: '-',
+            category3: '-',
+            keynote: '-',
+            focusExhibit: '-',
+            inviteOrg: { orgName: '-', department: '-', contact: '-', phone: '-' },
+            mainAttendant: { position: '-', name: '-', email: '-' },
+            subAttendant: { position: '-', name: '-', email: '-' },
+            additionalAttendants: []
+        }
     },
 ];
 
@@ -1334,10 +1664,9 @@
                     <td class="checkbox-cell">
                         <input type="checkbox" class="custom-checkbox vip-checkbox" data-id="${vip.id}">
                     </td>
-                    <td>${vip.name}</td>
+                    <td><span class="member-name-link" onclick="showMemberInfo(${vip.id})">${vip.name}</span></td>
                     <td>${vip.company}</td>
                     <td>${vip.type === 'ntt' ? 'アテンド' : '招待者'}</td>
-                    <td>${vip.email}</td>
                     <td>
                         <div class="reservation-tags">
                             ${vip.reservations.length > 0 
@@ -1349,17 +1678,6 @@
                                 `).join('')
                                 : '<span style="color: #a0aec0;">予約なし</span>'
                             }
-                        </div>
-                    </td>
-                    <td style="text-align: center;">
-                        <div class="lecture-toggle">
-                            <label class="toggle-switch">
-                                <input type="checkbox" ${vip.lecture ? 'checked' : ''} onchange="toggleLecture(${vip.id})">
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="lecture-label ${vip.lecture ? 'attending' : 'not-attending'}">
-                                ${vip.lecture ? '参加' : '不参加'}
-                            </span>
                         </div>
                     </td>
 
@@ -1547,16 +1865,9 @@
 
         // 三役の人物リスト
         const executiveList = [
-            { id: 'exec_1', name: '佐藤 健一' },
-            { id: 'exec_2', name: '鈴木 美咲' },
-            { id: 'exec_3', name: '田中 太郎' },
-            { id: 'exec_4', name: '高橋 花子' },
-            { id: 'exec_5', name: '伊藤 誠' },
-            { id: 'exec_6', name: '渡辺 由美' },
-            { id: 'exec_7', name: '山本 隆' },
-            { id: 'exec_8', name: '中村 さくら' },
-            { id: 'exec_9', name: '小林 大輔' },
-            { id: 'exec_10', name: '加藤 愛' }
+            { id: 'exec_1', name: '澁谷 直樹' },
+            { id: 'exec_2', name: '池田 敬' },
+            { id: 'exec_3', name: '熊谷 敏昌' },
         ];
 
         function showGreetingModal(members) {
@@ -1685,12 +1996,6 @@
         }
 
         // 基本講演トグル
-        function toggleLecture(id) {
-            const vip = vipData.find(v => v.id === id);
-            vip.lecture = !vip.lecture;
-            renderTable();
-        }
-
         // 記念品選択を更新
 function updateGiftSelection(id, value) {
     const vip = vipData.find(v => v.id === id);
@@ -1777,6 +2082,187 @@ function updateGiftSelection(id, value) {
         function closeLogoutModal() {
             document.getElementById('logout-modal').style.display = 'none';
         }
+
+        // 会員情報モーダル
+        function showMemberInfo(id) {
+            const vip = vipData.find(v => v.id === id);
+            if (!vip || !vip.details) return;
+
+            const d = vip.details;
+            const modal = document.getElementById('memberInfoModal');
+            const body = document.getElementById('memberInfoBody');
+
+            // バッジの生成
+            const vipBadge = d.category1 === 'VIP' 
+                ? '<span class="info-value-badge badge-vip">VIP</span>' 
+                : '<span class="info-value-badge badge-staff">担当者</span>';
+            
+            const keynoteBadge = d.keynote === '参加する'
+                ? '<span class="info-value-badge badge-yes">参加</span>'
+                : d.keynote === '不参加'
+                ? '<span class="info-value-badge badge-no">不参加</span>'
+                : d.keynote;
+
+            body.innerHTML = `
+                <div class="info-section">
+                    <div class="info-section-title">招待者情報</div>
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-label">氏名</div>
+                            <div class="info-value">${vip.name}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">社名</div>
+                            <div class="info-value">${vip.company}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">組織</div>
+                            <div class="info-value">${d.organization || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">役職</div>
+                            <div class="info-value">${d.position || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">招待者カテゴリー</div>
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-label">VIP or 担当者</div>
+                            <div class="info-value">${vipBadge}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">分類</div>
+                            <div class="info-value">${d.category2 || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">組織タイプ</div>
+                            <div class="info-value">${d.category3 || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">イベント情報</div>
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-label">基調講演</div>
+                            <div class="info-value">${keynoteBadge}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">重点説明項目</div>
+                            <div class="info-value">${d.focusExhibit || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">記念品</div>
+                            <div class="info-value">${vip.gift || '<span class="empty">未選択</span>'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">招待組織</div>
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-label">組織名</div>
+                            <div class="info-value">${d.inviteOrg?.orgName || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">事業部・部署名</div>
+                            <div class="info-value">${d.inviteOrg?.department || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">担当者名</div>
+                            <div class="info-value">${d.inviteOrg?.contact || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">電話番号</div>
+                            <div class="info-value">${d.inviteOrg?.phone || '<span class="empty">未設定</span>'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">アテンド担当者</div>
+                    <div class="attendant-list">
+                        <div class="attendant-item">
+                            <div class="attendant-item-title">アテンド（正）</div>
+                            <div class="info-grid">
+                                <div class="info-row">
+                                    <div class="info-label">役職</div>
+                                    <div class="info-value">${d.mainAttendant?.position || '<span class="empty">未設定</span>'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">氏名</div>
+                                    <div class="info-value">${d.mainAttendant?.name || '<span class="empty">未設定</span>'}</div>
+                                </div>
+                                <div class="info-row" style="grid-column: 1 / -1;">
+                                    <div class="info-label">メールアドレス</div>
+                                    <div class="info-value">${d.mainAttendant?.email || '<span class="empty">未設定</span>'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="attendant-item">
+                            <div class="attendant-item-title">アテンド（副）</div>
+                            <div class="info-grid">
+                                <div class="info-row">
+                                    <div class="info-label">役職</div>
+                                    <div class="info-value">${d.subAttendant?.position || '<span class="empty">未設定</span>'}</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-label">氏名</div>
+                                    <div class="info-value">${d.subAttendant?.name || '<span class="empty">未設定</span>'}</div>
+                                </div>
+                                <div class="info-row" style="grid-column: 1 / -1;">
+                                    <div class="info-label">メールアドレス</div>
+                                    <div class="info-value">${d.subAttendant?.email || '<span class="empty">未設定</span>'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${d.additionalAttendants && d.additionalAttendants.length > 0 ? `
+                            ${d.additionalAttendants.map((att, idx) => `
+                                <div class="attendant-item">
+                                    <div class="attendant-item-title">追加アテンド ${idx + 1}</div>
+                                    <div class="info-grid">
+                                        <div class="info-row">
+                                            <div class="info-label">役職</div>
+                                            <div class="info-value">${att.position || '<span class="empty">未設定</span>'}</div>
+                                        </div>
+                                        <div class="info-row">
+                                            <div class="info-label">氏名</div>
+                                            <div class="info-value">${att.name || '<span class="empty">未設定</span>'}</div>
+                                        </div>
+                                        <div class="info-row" style="grid-column: 1 / -1;">
+                                            <div class="info-label">メールアドレス</div>
+                                            <div class="info-value">${att.email || '<span class="empty">未設定</span>'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('show');
+        }
+
+        function closeMemberInfo() {
+            const modal = document.getElementById('memberInfoModal');
+            modal.classList.remove('show');
+        }
+
+        // モーダル外クリックで閉じる
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('memberInfoModal');
+            if (e.target === modal) {
+                closeMemberInfo();
+            }
+        });
 
         // バッジ一括ダウンロード（PDF生成）
         async function downloadAllBadges() {
@@ -1913,6 +2399,14 @@ function updateGiftSelection(id, value) {
         box-shadow: 0 6px 20px rgba(11, 95, 255, 0.4);
     }
 
+    .login-note {
+        margin-top: 16px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        color: #4a5568;
+        line-height: 1.6;
+    }
+
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
@@ -1926,6 +2420,49 @@ function updateGiftSelection(id, value) {
         padding: 6px 12px;
         cursor: pointer;
         margin-left: auto;
+        font-size: 14px;
+        font-weight: 500 !important;
+        transition: all 0.3s;
+    }
+    
+    .logout-btn:hover {
+        background: #0847b3;
+        transform: translateY(-2px);
+    }
+    
+    /* 記念品選択セレクトボックス */
+    .gift-select {
+        padding: 8px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #2d3748;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+        min-width: 180px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+    }
+    
+    .gift-select:hover {
+        border-color: #0B5FFF;
+        box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.1);
+    }
+    
+    .gift-select:focus {
+        outline: none;
+        border-color: #0B5FFF;
+        box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.15);
+    }
+    
+    .gift-select option {
+        padding: 10px;
+        font-weight: 500;
     }
     /* ログアウト確認モーダル用オーバーレイ */
     .logout-overlay {
@@ -1989,7 +2526,7 @@ function updateGiftSelection(id, value) {
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         padding: 60px 50px;
         text-align: center;
-        width: 360px;
+        width: min(480px, 90%);
         animation: fadeIn 0.6s ease;
     }
     </style>
