@@ -1342,7 +1342,7 @@
             ・三役挨拶は承認制、ツアーは抽選となります。それぞれ確定時に結果をメールにてお知らせします。<br>
             ・招待者の変更については事務局までお知らせください<br>
             ・招待者の変更については事務局までお知らせください<br>
-            ・お土産については、お菓子およびグッズのお渡しを想定しておりますが、「社外との接遇等に関するガイドライン」に基づき配布有無のご判断をお願いいたします。
+            ・お土産については、お菓子および記念品のお渡しを想定しておりますが、「社外との接遇等に関するガイドライン」に基づき配布有無のご判断をお願いいたします。
             </p>
             <p><strong>◆イベント当日について</strong><br>
             ・
@@ -1390,7 +1390,7 @@
                             <th class="sortable">企業名 </th>
                             <th>会員属性</th>
                             <th>予約一覧</th>
-                            <th style="text-align: center;">記念品の選択</th>
+                            <th style="text-align: center;">お土産の選択</th>
                         </tr>
                     </thead>
                     <tbody id="vipTableBody">
@@ -1587,7 +1587,7 @@
         company: 'bravesoft株式会社',
         email: 'kaneshiro@bravesoft.co.jp',
         reservations: ['展示ツアー 10:00~11:00枠', 'お弁当', '三役挨拶 13:00~'],
-        gift: 'お菓子＋グッズ',
+        gift: 'お菓子＋記念品',
         type: 'guest',
         hasInvitationTicket: true,
         // 詳細情報
@@ -1627,7 +1627,7 @@
         company: 'テスト株式会社',
         email: 'koide@test.co.jp',
         reservations: ['展示ツアー 11:00~12:00枠', '三役挨拶 13:00~'],
-        gift: 'グッズのみ',
+        gift: '記念品のみ',
         type: 'guest',
         hasInvitationTicket: true,
         details: {
@@ -1808,8 +1808,8 @@
                     <td style="text-align: center;">
     <select class="gift-select" onchange="updateGiftSelection(${vip.id}, this.value)">
         <option value="">選択してください</option>
-        <option value="お菓子＋グッズ" ${vip.gift === 'お菓子＋グッズ' ? 'selected' : ''}>お菓子＋グッズ</option>
-        <option value="グッズのみ" ${vip.gift === 'グッズのみ' ? 'selected' : ''}>グッズのみ</option>
+        <option value="お菓子＋記念品" ${vip.gift === 'お菓子＋記念品' ? 'selected' : ''}>お菓子＋記念品</option>
+        <option value="記念品のみ" ${vip.gift === '記念品のみ' ? 'selected' : ''}>記念品のみ</option>
         <option value="どちらも渡さない" ${vip.gift === 'どちらも渡さない' ? 'selected' : ''}>どちらも渡さない</option>
         <option value="不要（アテンド用）" ${vip.gift === '不要（アテンド用）' ? 'selected' : ''}>不要（アテンド用）</option>
     </select>
@@ -2312,8 +2312,8 @@ function updateGiftSelection(id, value) {
                             ${isEditMode ? 
                                 `<select class="info-input" id="edit_gift">
                                     <option value="">未選択</option>
-                                    <option value="お菓子＋グッズ" ${vip.gift === 'お菓子＋グッズ' ? 'selected' : ''}>お菓子＋グッズ</option>
-                                    <option value="グッズのみ" ${vip.gift === 'グッズのみ' ? 'selected' : ''}>グッズのみ</option>
+                                    <option value="お菓子＋記念品" ${vip.gift === 'お菓子＋記念品' ? 'selected' : ''}>お菓子＋記念品</option>
+                                    <option value="記念品のみ" ${vip.gift === '記念品のみ' ? 'selected' : ''}>記念品のみ</option>
                                     <option value="どちらも渡さない" ${vip.gift === 'どちらも渡さない' ? 'selected' : ''}>どちらも渡さない</option>
                                     <option value="不要（アテンド用）" ${vip.gift === '不要（アテンド用）' ? 'selected' : ''}>不要（アテンド用）</option>
                                 </select>` :
