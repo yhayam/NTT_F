@@ -173,6 +173,38 @@
             font-size: 14px;
         }
 
+        /* リロードボタン */
+        .reload-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            height: 42px;
+        }
+
+        .reload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .reload-icon {
+            font-size: 16px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .reload-btn:hover .reload-icon {
+            transform: rotate(180deg);
+        }
+
         /* VIPテーブル */
         .vip-table-container {
             background: white;
@@ -1378,6 +1410,10 @@
                             <option value="ntt">アテンド担当</option>
                         </select>
                     </div>
+                    <button class="reload-btn" onclick="reloadReservations()">
+                        <span class="reload-icon">↻</span>
+                        <span>予約状況を更新</span>
+                    </button>
                 </div>
             </div>
             <!-- VIPテーブル -->
@@ -1599,6 +1635,7 @@
             category3: '民間企業',
             keynote: '参加する',
             focusExhibit: 'A展示',
+            interestArea: 'A',
             inviteOrg: {
                 orgName: 'NTT東日本 神奈川事業部',
                 department: '法人営業部',
@@ -1638,6 +1675,7 @@
             category3: '民間企業',
             keynote: '不参加',
             focusExhibit: 'B展示',
+            interestArea: 'A',
             inviteOrg: {
                 orgName: 'NTT東日本 東京事業部',
                 department: '営業部',
@@ -1674,6 +1712,7 @@
             category3: '民間企業',
             keynote: '参加する',
             focusExhibit: 'A展示',
+            interestArea: 'A',
             inviteOrg: { orgName: 'NTT東日本', department: '営業部', contact: '担当者名', phone: '00-0000-0000' },
             mainAttendant: { position: '課長', name: 'メイン担当', email: 'main@ntt.co.jp' },
             subAttendant: { position: '担当', name: 'サブ担当', email: 'sub@ntt.co.jp' },
@@ -1697,6 +1736,7 @@
             category3: '民間企業',
             keynote: '不参加',
             focusExhibit: 'B展示',
+            interestArea: 'A',
             inviteOrg: { orgName: 'NTT東日本', department: '営業部', contact: '担当者名', phone: '00-0000-0000' },
             mainAttendant: { position: '課長', name: 'メイン担当', email: 'main@ntt.co.jp' },
             subAttendant: { position: '担当', name: 'サブ担当', email: 'sub@ntt.co.jp' },
@@ -1720,6 +1760,7 @@
             category3: '-',
             keynote: '-',
             focusExhibit: '-',
+            interestArea: '-',
             inviteOrg: { orgName: '-', department: '-', contact: '-', phone: '-' },
             mainAttendant: { position: '-', name: '-', email: '-' },
             subAttendant: { position: '-', name: '-', email: '-' },
@@ -1743,6 +1784,7 @@
             category3: '-',
             keynote: '-',
             focusExhibit: '-',
+            interestArea: '-',
             inviteOrg: { orgName: '-', department: '-', contact: '-', phone: '-' },
             mainAttendant: { position: '-', name: '-', email: '-' },
             subAttendant: { position: '-', name: '-', email: '-' },
@@ -1766,6 +1808,7 @@
             category3: '-',
             keynote: '-',
             focusExhibit: '-',
+            interestArea: '-',
             inviteOrg: { orgName: '-', department: '-', contact: '-', phone: '-' },
             mainAttendant: { position: '-', name: '-', email: '-' },
             subAttendant: { position: '-', name: '-', email: '-' },
@@ -1823,6 +1866,29 @@
             document.querySelectorAll('.vip-checkbox').forEach(cb => {
                 cb.addEventListener('change', updateSelection);
             });
+        }
+
+        // ★リロード機能
+        function reloadReservations() {
+            // リロードアニメーション
+            const reloadIcon = document.querySelector('.reload-icon');
+            reloadIcon.style.transform = 'rotate(360deg)';
+            
+            // 実際にはサーバーからデータを再取得する想定
+            // ここではダミーとして少し待機してからテーブルを再描画
+            setTimeout(() => {
+                renderTable();
+                reloadIcon.style.transform = 'rotate(0deg)';
+                
+                // 更新完了メッセージを表示
+                const saveMessage = document.getElementById('saveMessage');
+                saveMessage.querySelector('span:last-child').textContent = '予約状況を更新しました';
+                saveMessage.classList.add('show');
+                setTimeout(() => {
+                    saveMessage.classList.remove('show');
+                    saveMessage.querySelector('span:last-child').textContent = '保存しました';
+                }, 2000);
+            }, 500);
         }
 
         // 選択状態を更新
@@ -2307,6 +2373,21 @@ function updateGiftSelection(id, value) {
                                 `<div class="info-value">${d.focusExhibit || '<span class="empty">未設定</span>'}</div>`
                             }
                         </div>
+
+                        <div class="info-row">
+                            <div class="info-label">興味分野</div>
+                            ${isEditMode ? 
+                                `<select class="info-input" id="edit_interestArea">
+                                    <option value="">未選択</option>
+                                    <option value="A" ${d.interestArea === 'A' ? 'selected' : ''}>A</option>
+                                    <option value="B" ${d.interestArea === 'B' ? 'selected' : ''}>B</option>
+                                    <option value="C" ${d.interestArea === 'C' ? 'selected' : ''}>C</option>
+                                    <option value="D" ${d.interestArea === 'D' ? 'selected' : ''}>D</option>
+                                </select>` :
+                                `<div class="info-value">${d.interestArea || '<span class="empty">未選択</span>'}</div>`
+                            }
+                        </div>
+
                         <div class="info-row">
                             <div class="info-label">記念品の有無</div>
                             ${isEditMode ? 
@@ -2431,6 +2512,7 @@ function updateGiftSelection(id, value) {
             // イベント情報のみ編集可能
             d.keynote = document.getElementById('edit_keynote')?.value || d.keynote;
             d.focusExhibit = document.getElementById('edit_focusExhibit')?.value || d.focusExhibit;
+            d.interestArea = document.getElementById('edit_interestArea')?.value || d.interestArea; 
             vip.gift = document.getElementById('edit_gift')?.value || vip.gift;
 
             // 編集モード解除
